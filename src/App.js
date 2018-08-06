@@ -4,6 +4,7 @@ import {TodoListItem} from "./TodoListItem";
 import {Footer} from "./Footer";
 import {TodoItem} from "./TodoItem";
 import {repository} from "./repository";
+import {localRepository} from "./localRepository";
 
 class App extends Component {
     ALL_TODOS = 'all';
@@ -43,12 +44,14 @@ class App extends Component {
         if (val) {
             repository.addTodo(val).then(() => this.getTodos());
             this.setState({newTodo: ''});
+            this.setState(localRepository.addTodo(val, this.state))
         }
     }
 
     toggleAll = (event) => {
         const checked = event.target.checked;
         repository.toggleAllTodosTo(checked).then(() => this.getTodos())
+        this.setState(localRepository.toggleAllTodosTo(checked, this.state))
     }
 
     toggle = (todoToToggle) => {
@@ -56,10 +59,15 @@ class App extends Component {
             ...todoToToggle,
             completed: !todoToToggle.completed
         }).then(() => this.getTodos())
+        this.setState(localRepository.updateTodo({
+            ...todoToToggle,
+            completed: !todoToToggle.completed
+        }, this.state))
     }
 
     destroy = (todoToDelete) => {
         repository.deleteTodo(todoToDelete).then(() => this.getTodos());
+        this.setState(localRepository.deleteTodo(todoToDelete, this.state))
     }
 
     edit = (todo) => {
@@ -72,6 +80,10 @@ class App extends Component {
             title: text
         }).then(() => this.getTodos());
         this.setState({editing: null});
+        this.setState(localRepository.save({
+            ...todoToSave,
+            title: text
+        }, this.state))
     }
 
     cancel = () => {
@@ -80,6 +92,7 @@ class App extends Component {
 
     clearCompleted = () => {
         repository.deleteCompletedTodos().then(() => this.getTodos());
+        this.setState(localRepository.deleteCompletedTodos(this.state))
     }
 
     updateShowing = (showing) => () => {
