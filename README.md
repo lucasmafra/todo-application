@@ -1,9 +1,9 @@
 # todo-application
 
-This is a simple Todo front-end application built with React. It was developed as part of a [series of examples](https://github.com/lucasmafra/type-dynamo-examples) for [Type Dynamo](http://github.com/lucasmafra/type-dynamo) project.
+This is a simple Todo front-end application built with [React](https://reactjs.org/). It was developed as part of a [series of examples](https://github.com/lucasmafra/type-dynamo-examples) for [Type Dynamo](http://github.com/lucasmafra/type-dynamo) project.
 
 ## Demo
-You can check demo [here](https://type-dynamo.lucasmafra.io).
+You can check the demo [here](https://type-dynamo.lucasmafra.io).
 
 ## Run
 Clone the project, open a terminal in the project root folder and run:
