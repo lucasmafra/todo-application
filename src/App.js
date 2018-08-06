@@ -17,7 +17,7 @@ class App extends Component {
         editing: null,
         newTodo: '',
         todos: [],
-        gettingTodos: false
+        pending: 0
     }
 
     async componentDidMount() {
@@ -25,12 +25,15 @@ class App extends Component {
     }
 
     getTodos = async() => {
-        this.setState({ gettingTodos: true })
+        this.setState({ pending: this.state.pending + 1 })
         try {
             const todos = await repository.getTodos()
-            this.setState({ todos, gettingTodos: false })
+            this.setState({ pending: this.state.pending - 1 })
+            if (this.state.pending === 0) {
+                this.setState({ todos })
+            }
         } catch(err) {
-            this.setState({ gettingTodos: true })
+            this.setState({ pending: this.state.pending - 1 })
         }
     }
 
