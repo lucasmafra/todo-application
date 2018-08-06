@@ -21,6 +21,9 @@ class App extends Component {
 
     async componentDidMount() {
         this.getTodos()
+        setInterval(() => {
+            this.getTodos()
+        }, 5000)
     }
 
     getTodos = async() => {
@@ -42,7 +45,7 @@ class App extends Component {
         var val = this.state.newTodo.trim();
 
         if (val) {
-            repository.addTodo(val).then(() => this.getTodos());
+            repository.addTodo(val)
             this.setState({newTodo: ''});
             this.setState(localRepository.addTodo(val, this.state))
         }
@@ -50,7 +53,7 @@ class App extends Component {
 
     toggleAll = (event) => {
         const checked = event.target.checked;
-        repository.toggleAllTodosTo(checked).then(() => this.getTodos())
+        repository.toggleAllTodosTo(checked)
         this.setState(localRepository.toggleAllTodosTo(checked, this.state))
     }
 
@@ -58,7 +61,7 @@ class App extends Component {
         repository.updateTodo({
             ...todoToToggle,
             completed: !todoToToggle.completed
-        }).then(() => this.getTodos())
+        })
         this.setState(localRepository.updateTodo({
             ...todoToToggle,
             completed: !todoToToggle.completed
@@ -66,7 +69,7 @@ class App extends Component {
     }
 
     destroy = (todoToDelete) => {
-        repository.deleteTodo(todoToDelete).then(() => this.getTodos());
+        repository.deleteTodo(todoToDelete)
         this.setState(localRepository.deleteTodo(todoToDelete, this.state))
     }
 
@@ -78,7 +81,7 @@ class App extends Component {
         repository.updateTodo({
             ...todoToSave,
             title: text
-        }).then(() => this.getTodos());
+        })
         this.setState({editing: null});
         this.setState(localRepository.save({
             ...todoToSave,
@@ -91,7 +94,7 @@ class App extends Component {
     }
 
     clearCompleted = () => {
-        repository.deleteCompletedTodos().then(() => this.getTodos());
+        repository.deleteCompletedTodos()
         this.setState(localRepository.deleteCompletedTodos(this.state))
     }
 
