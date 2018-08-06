@@ -16,19 +16,22 @@ class App extends Component {
         nowShowing: this.ALL_TODOS,
         editing: null,
         newTodo: '',
-        todos: []
+        todos: [],
+        gettingTodos: false
     }
 
     async componentDidMount() {
         this.getTodos()
-        setInterval(() => {
-            this.getTodos()
-        }, 5000)
     }
 
     getTodos = async() => {
-        const todos = await repository.getTodos()
-        this.setState({ todos })
+        this.setState({ gettingTodos: true })
+        try {
+            const todos = await repository.getTodos()
+            this.setState({ todos, gettingTodos: false })
+        } catch(err) {
+            this.setState({ gettingTodos: true })
+        }
     }
 
     handleChange = (event) => {
@@ -45,7 +48,7 @@ class App extends Component {
         var val = this.state.newTodo.trim();
 
         if (val) {
-            repository.addTodo(val)
+            repository.addTodo(val).then(() => !this.state.gettingTodos && this.getTodos())
             this.setState({newTodo: ''});
             this.setState(localRepository.addTodo(val, this.state))
         }
@@ -53,7 +56,7 @@ class App extends Component {
 
     toggleAll = (event) => {
         const checked = event.target.checked;
-        repository.toggleAllTodosTo(checked)
+        repository.toggleAllTodosTo(checked).then(() => !this.state.gettingTodos && this.getTodos())
         this.setState(localRepository.toggleAllTodosTo(checked, this.state))
     }
 
@@ -61,7 +64,7 @@ class App extends Component {
         repository.updateTodo({
             ...todoToToggle,
             completed: !todoToToggle.completed
-        })
+        }).then(() => !this.state.gettingTodos && this.getTodos())
         this.setState(localRepository.updateTodo({
             ...todoToToggle,
             completed: !todoToToggle.completed
@@ -69,7 +72,7 @@ class App extends Component {
     }
 
     destroy = (todoToDelete) => {
-        repository.deleteTodo(todoToDelete)
+        repository.deleteTodo(todoToDelete).then(() => !this.state.gettingTodos && this.getTodos())
         this.setState(localRepository.deleteTodo(todoToDelete, this.state))
     }
 
@@ -81,7 +84,7 @@ class App extends Component {
         repository.updateTodo({
             ...todoToSave,
             title: text
-        })
+        }).then(() => !this.state.gettingTodos && this.getTodos())
         this.setState({editing: null});
         this.setState(localRepository.save({
             ...todoToSave,
@@ -94,7 +97,7 @@ class App extends Component {
     }
 
     clearCompleted = () => {
-        repository.deleteCompletedTodos()
+        repository.deleteCompletedTodos().then(() => !this.state.gettingTodos && this.getTodos())
         this.setState(localRepository.deleteCompletedTodos(this.state))
     }
 
